@@ -117,14 +117,14 @@ void draw() {
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	program.SetProjectionMatrix(projectionMatrix);
-	program.SetViewMatrix(viewMatrix);
+	//program.SetProjectionMatrix(projectionMatrix);
+	//program.SetViewMatrix(viewMatrix);
 	modelMatrix = glm::mat4(1.0f);
 	program.SetModelMatrix(modelMatrix);
 	drawBox();
 
-	programTextured.SetProjectionMatrix(projectionMatrix);
-	programTextured.SetViewMatrix(viewMatrix);
+	//programTextured.SetProjectionMatrix(projectionMatrix);
+	//programTextured.SetViewMatrix(viewMatrix);
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f, 0.5f, 1.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-2.0f, 0.0f, 0.0f));
