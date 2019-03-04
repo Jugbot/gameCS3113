@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 glm::mat4 projectionMatrix;
 glm::mat4 modelMatrix;
 glm::mat4 viewMatrix;
+ShaderProgram programTextured;
 ShaderProgram program;
 GLuint textureEmojiCute;
 GLuint textureEmojiEvil;
@@ -62,7 +63,8 @@ void setup() {
 	glewInit();
 #endif
 
-	program.Load(RESOURCE_FOLDER"vertex_textured.glsl", RESOURCE_FOLDER"fragment_textured.glsl");
+	programTextured.Load(RESOURCE_FOLDER"vertex_textured.glsl", RESOURCE_FOLDER"fragment_textured.glsl");
+	program.Load(RESOURCE_FOLDER"vertex.glsl", RESOURCE_FOLDER"fragment.glsl");
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glViewport(0, 0, 640, 360);
@@ -79,27 +81,36 @@ void setup() {
 	program.SetProjectionMatrix(projectionMatrix);
 	program.SetViewMatrix(viewMatrix);
 	program.SetModelMatrix(modelMatrix);
+	programTextured.SetProjectionMatrix(projectionMatrix);
+	programTextured.SetViewMatrix(viewMatrix);
+	programTextured.SetModelMatrix(modelMatrix);
 
 	glUseProgram(program.programID);
+	glUseProgram(programTextured.programID);
 }
 
 float vertices[] = { -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0 };
 float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
 void drawTex(GLuint texture) {
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
-	glEnableVertexAttribArray(program.positionAttribute);
+	glVertexAttribPointer(programTextured.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
+	glEnableVertexAttribArray(programTextured.positionAttribute);
 
-	glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
-	glEnableVertexAttribArray(program.texCoordAttribute);
+	glVertexAttribPointer(programTextured.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
+	glEnableVertexAttribArray(programTextured.texCoordAttribute);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glDisableVertexAttribArray(program.positionAttribute);
-	glDisableVertexAttribArray(program.texCoordAttribute);
+	glDisableVertexAttribArray(programTextured.positionAttribute);
+	glDisableVertexAttribArray(programTextured.texCoordAttribute);
 }
 
 void drawBox() {
-	drawTex(NULL);
+	program.SetColor(0.0f,0.5f,0.1f,1.0f);
+	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
+	glEnableVertexAttribArray(program.positionAttribute);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisableVertexAttribArray(program.positionAttribute);
 }
 
 void draw() {
@@ -108,21 +119,22 @@ void draw() {
 
 	program.SetProjectionMatrix(projectionMatrix);
 	program.SetViewMatrix(viewMatrix);
-
 	modelMatrix = glm::mat4(1.0f);
 	program.SetModelMatrix(modelMatrix);
 	drawBox();
 
+	programTextured.SetProjectionMatrix(projectionMatrix);
+	programTextured.SetViewMatrix(viewMatrix);
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f, 0.5f, 1.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-2.0f, 0.0f, 0.0f));
-	program.SetModelMatrix(modelMatrix);
+	programTextured.SetModelMatrix(modelMatrix);
 	drawTex(textureEmojiCute);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 0.0f, 0.0f));
-	program.SetModelMatrix(modelMatrix);
+	programTextured.SetModelMatrix(modelMatrix);
 	drawTex(textureEmojiEvil);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 0.0f, 0.0f));
-	program.SetModelMatrix(modelMatrix);
+	programTextured.SetModelMatrix(modelMatrix);
 	drawTex(textureEmojiLaugh);
 
 
