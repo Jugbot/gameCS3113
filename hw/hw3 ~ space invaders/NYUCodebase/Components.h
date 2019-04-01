@@ -17,9 +17,9 @@ struct Transform
 	float vel_x, vel_y;
 	float acc_x, acc_y;
 	float scale = 1.0f;
-	float z_distance = 0.0f;
-	float friction = 1.0f;
 	float radians = 0.0f;
+	float z_distance = 0.0f;
+	float friction = 5.0f;
 	glm::mat4 transform = glm::mat4(1.0f);
 };
 
@@ -59,7 +59,10 @@ struct Lifespan {
 };
 
 struct Enemy {
-	//AI
+	float nextMove = 0.0f;
+	float nextShoot = 0.0f;
+	float t_accumulator_move = 0.0f;
+	float t_accumulator_shoot = 0.0f;
 };
 
 #include "SDL_scancode.h"
@@ -67,10 +70,10 @@ struct Player {
 	SDL_Scancode fire;
 	SDL_Scancode left;
 	SDL_Scancode right;
-	float laserCooldown = 0.2f;
-	float agility = 40.0f;
 };
 
+enum Owner {PLAYER, ENEMY};
 struct Laser {
-
+	Owner owner;
+	int damage = 1;
 };

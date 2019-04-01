@@ -52,7 +52,9 @@ public:
 			float y = tex.attribute("y").as_float() / image.h;
 			float w = tex.attribute("width").as_float() / image.w;
 			float h = tex.attribute("height").as_float() / image.h;
-			float aspect = w / h;
+			float realw = w * image.w;
+			float realh = h * image.h;
+			float aspect = realw / realh;
 			TextureData texture = {	{
 					x		, y + h,
 					x + w	, y + h,
@@ -68,7 +70,7 @@ public:
 					aspect / 2, 0.5f,
 					-aspect / 2, 0.5f
 				},
-				w, h, image.id
+				aspect, 1.0f, image.id
 			};
 			//std::cout << "<UV name:" << filename << " x:" << x << " y:" << y << " w:" << w << " h:" << h << " >\n";
 			tex_uvs[filename] = texture;
@@ -89,7 +91,9 @@ public:
 				float h = 1.0f / rows;
 				float px = x * w;
 				float py = y * h;
-				float aspect = w / h;
+				float realw = w * image.w;
+				float realh = h * image.h;
+				float aspect =  realw / realh;
 				tex_uvs[*nameIter] = { 
 					{
 						px		, py + h,
@@ -106,8 +110,9 @@ public:
 						aspect / 2, 0.5f,
 						-aspect / 2, 0.5f
 					},
-					w, h, image.id
+					aspect, 1.0f, image.id
 				};
+				nameIter++;
 			}
 		}
 	}
