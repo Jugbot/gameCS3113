@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\tmx">
+      <UniqueIdentifier>{b694c79f-8ea6-499b-90b0-72b792f75bc7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment.glsl" />
+    <None Include="vertex.glsl" />
+    <None Include="fragment_textured.glsl" />
+    <None Include="tmxparser\tmxparser.pc.in">
+      <Filter>Header Files\tmx</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\base64.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\miniz.c">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxColor.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxEllipse.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxGroupLayer.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxImage.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxImageLayer.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxLayer.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxMap.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxObject.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxObjectGroup.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxPolygon.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxPolyline.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxProperty.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxPropertySet.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxTerrain.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxTerrainArray.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxText.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxTile.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxTileLayer.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxTileOffset.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxTileset.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+    <ClCompile Include="tmxparser\TmxUtil.cpp">
+      <Filter>Header Files\tmx</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TextureAtlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Services.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\base64.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\Tmx.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxColor.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxEllipse.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxGroupLayer.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxImage.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxImageLayer.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxLayer.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxMap.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxMapTile.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxObject.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxObjectGroup.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxPoint.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxPolygon.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxPolyline.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxProperty.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxPropertySet.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxTerrain.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxTerrainArray.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxText.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxTile.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxTileLayer.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxTileOffset.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxTileset.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+    <ClInclude Include="tmxparser\TmxUtil.h">
+      <Filter>Header Files\tmx</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
