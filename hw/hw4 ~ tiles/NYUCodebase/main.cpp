@@ -1,7 +1,6 @@
 #include <time.h>
 #include <iostream>
 #include <string>
-#define USE_MINIZ
 #ifdef _WINDOWS
 #include <GL/glew.h>
 #endif
@@ -76,12 +75,13 @@ int main(int argc, char *argv[])
 glm::mat4 projectionMatrix;
 glm::mat4 viewMatrix;
 #define WINDOW_X 640
-#define WINDOW_Y 960
+#define WINDOW_Y 360
 ShaderProgram program;
 const float scale = 10.0f;
 float y_max;
 float x_max;
 TexturePool texAtlas;
+World world;
 void setup() {
 	SDL_Init(SDL_INIT_VIDEO);
 	displayWindow = SDL_CreateWindow("My Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_X, WINDOW_Y, SDL_WINDOW_OPENGL);
@@ -95,7 +95,9 @@ void setup() {
 	program.Load(RESOURCE_FOLDER"vertex_textured.glsl", RESOURCE_FOLDER"fragment_textured.glsl");
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, WINDOW_X, WINDOW_Y);
+	glClearColor(33.f/255.f, 38.f/255.f,63.f/255.f, 1.0f);
 
 	y_max = scale;
 	x_max = WINDOW_X / (float)WINDOW_Y * scale;
@@ -117,21 +119,12 @@ void setup() {
 	std::vector<std::string> alphabet;
 	while (ifs >> curr)
 		alphabet.push_back(std::string(1, curr));
+	std::vector<std::string> heroanim;
+	for (int i = 0; i < 15; i++)
+		heroanim.push_back("hero" + std::to_string(i));
 	texAtlas.addGrid(std::string("assets/thickfont.png"), alphabet, 'z' - 'a' + 1, 4);
-	////INIT ANIMATIONS
-	//setupAssets(texAtlas);
-	////GAME OBJECTS
-	//newPlayer(0.0f, -0.8f * scale);
-	////MENU OBJECTS
-	//std::string title("SPACE INVADAAARS");
-	//newText(menuRegistry, texAtlas, 0.0f, y_max / 2, x_max * 2 / (title.size()+2), title);
-	//std::string message("Click to Start");
-	//float subSize = x_max / message.size();
-	//newText(menuRegistry, texAtlas, 0.0f, 0.0f, subSize, message);
-	//message = "Move: A/D";
-	//newText(menuRegistry, texAtlas, 0.0f, -y_max / 2, subSize, message);
-	//message = "Shoot: Space";
-	//newText(menuRegistry, texAtlas, 0.0f, -y_max / 2 - 1.0f, subSize, message);
+	texAtlas.addGrid(std::string("assets/hero.png"), heroanim, 15, 1);
+	world.Load(entityRegistry, texAtlas, "assets/room1.tmx");
 }
 
 
@@ -139,19 +132,26 @@ int playersAlive() {
 	return entityRegistry.size<Player>();
 }
 
+#define TIMESTEP 1.f/60.f
 void update() {
 	static bool gameover = false;
 	static float lastFrameTicks = 0.0f;
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
 	float elapsed = ticks - lastFrameTicks;
-	lastFrameTicks = ticks;
+	if (elapsed < TIMESTEP)
+		return;
+	elapsed = TIMESTEP;
+	lastFrameTicks += elapsed;
+
 
 	deathCheck();
 	timeoutCheck(elapsed);
-	readInputs(elapsed);
 	enemyMovement(elapsed);
 	updateAnimations(elapsed);
-	updateMotion(elapsed); 
+	updateMotion(elapsed);
+	readInputs(elapsed);
+	updatePlayerCamera(viewMatrix);
+	program.SetViewMatrix(viewMatrix);
 	if (!gameover && !playersAlive()) {
 		gameover = true;
 		std::string message("D E A D");
@@ -160,6 +160,7 @@ void update() {
 }
 
 void display() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	updateTransforms(entityRegistry);
 	render(entityRegistry, program);
 	SDL_GL_SwapWindow(displayWindow);

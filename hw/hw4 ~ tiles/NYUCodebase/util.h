@@ -11,6 +11,7 @@ struct Image {
 };
 
 Image LoadTexture(const char *filePath) {
+	std::cout << filePath << std::endl;
 	int w, h, comp;
 	unsigned char* image = stbi_load(filePath, &w, &h, &comp, STBI_rgb_alpha);
 
@@ -28,6 +29,10 @@ Image LoadTexture(const char *filePath) {
 	stbi_image_free(image);
 	return { retTexture, w, h };
 };
+
+Image LoadTexture(const std::string& str) {
+	return LoadTexture(str.c_str());
+}
 
 GLuint LoadArray(float* buf, int size) {
 	GLuint id;

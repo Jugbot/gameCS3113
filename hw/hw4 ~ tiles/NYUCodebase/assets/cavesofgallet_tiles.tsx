@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.2" tiledversion="1.2.3" name="cavesofgallet_tiles" tilewidth="8" tileheight="8" tilecount="96" columns="8">
- <image source="../assets/cavesofgallet_tiles.png" trans="003039" width="64" height="96"/>
+ <image source="cavesofgallet_tiles.png" trans="003039" width="64" height="96"/>
  <tile id="0">
   <properties>
    <property name="collision" type="bool" value="false"/>
@@ -70,16 +70,25 @@
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="2" x="0" y="0" width="3" height="4"/>
+  </objectgroup>
  </tile>
  <tile id="14">
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="0" width="8" height="1"/>
+  </objectgroup>
  </tile>
  <tile id="15">
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="0" width="8" height="1"/>
+  </objectgroup>
  </tile>
  <tile id="16">
   <properties>
@@ -105,6 +114,9 @@
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="0" width="8" height="1"/>
+  </objectgroup>
  </tile>
  <tile id="21">
   <properties>
@@ -115,6 +127,9 @@
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="0" width="8" height="1"/>
+  </objectgroup>
  </tile>
  <tile id="23">
   <properties>
@@ -163,7 +178,7 @@
  </tile>
  <tile id="32">
   <properties>
-   <property name="collision" type="bool" value="false"/>
+   <property name="collision" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="33">
@@ -188,7 +203,7 @@
  </tile>
  <tile id="37">
   <properties>
-   <property name="collision" type="bool" value="false"/>
+   <property name="collision" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="38">
@@ -348,12 +363,12 @@
  </tile>
  <tile id="69">
   <properties>
-   <property name="collision" type="bool" value="true"/>
+   <property name="collision" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="70">
   <properties>
-   <property name="collision" type="bool" value="true"/>
+   <property name="collision" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="71">

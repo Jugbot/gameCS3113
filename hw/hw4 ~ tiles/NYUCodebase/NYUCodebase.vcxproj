@@ -45,7 +45,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\SDL2\include;$(ProjectDir)\SDL2_image\include;$(ProjectDir)\glew\include;$(ProjectDir)\SDL2_mixer\include;$(ProjectDir)\tinyxml2;$(ProjectDir)\tmxparser</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\SDL2\include;$(ProjectDir)\SDL2_image\include;$(ProjectDir)\glew\include;$(ProjectDir)\SDL2_mixer\include;$(ProjectDir)\tmxparser;$(ProjectDir)\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -62,7 +62,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\SDL2\include;$(ProjectDir)\SDL2_image\include;$(ProjectDir)\glew\include;$(ProjectDir)\SDL2_mixer\include;$(ProjectDir)\tinyxml2;$(ProjectDir)\tmxparser</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\SDL2\include;$(ProjectDir)\SDL2_image\include;$(ProjectDir)\glew\include;$(ProjectDir)\SDL2_mixer\include;$(ProjectDir)\tmxparser;$(ProjectDir)\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -77,35 +77,21 @@
   <ItemGroup>
     <None Include="fragment.glsl" />
     <None Include="fragment_textured.glsl" />
-    <None Include="tmxparser\tmxparser.pc.in" />
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="pugixml\pugixml.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="tmxparser\base64.cpp" />
+    <ClCompile Include="tmxparser\FreeFuncs.cpp" />
+    <ClCompile Include="tmxparser\ImageLayer.cpp" />
+    <ClCompile Include="tmxparser\Map.cpp" />
     <ClCompile Include="tmxparser\miniz.c" />
-    <ClCompile Include="tmxparser\TmxColor.cpp" />
-    <ClCompile Include="tmxparser\TmxEllipse.cpp" />
-    <ClCompile Include="tmxparser\TmxGroupLayer.cpp" />
-    <ClCompile Include="tmxparser\TmxImage.cpp" />
-    <ClCompile Include="tmxparser\TmxImageLayer.cpp" />
-    <ClCompile Include="tmxparser\TmxLayer.cpp" />
-    <ClCompile Include="tmxparser\TmxMap.cpp" />
-    <ClCompile Include="tmxparser\TmxObject.cpp" />
-    <ClCompile Include="tmxparser\TmxObjectGroup.cpp" />
-    <ClCompile Include="tmxparser\TmxPolygon.cpp" />
-    <ClCompile Include="tmxparser\TmxPolyline.cpp" />
-    <ClCompile Include="tmxparser\TmxProperty.cpp" />
-    <ClCompile Include="tmxparser\TmxPropertySet.cpp" />
-    <ClCompile Include="tmxparser\TmxTerrain.cpp" />
-    <ClCompile Include="tmxparser\TmxTerrainArray.cpp" />
-    <ClCompile Include="tmxparser\TmxText.cpp" />
-    <ClCompile Include="tmxparser\TmxTile.cpp" />
-    <ClCompile Include="tmxparser\TmxTileLayer.cpp" />
-    <ClCompile Include="tmxparser\TmxTileOffset.cpp" />
-    <ClCompile Include="tmxparser\TmxTileset.cpp" />
-    <ClCompile Include="tmxparser\TmxUtil.cpp" />
+    <ClCompile Include="tmxparser\Object.cpp" />
+    <ClCompile Include="tmxparser\ObjectGroup.cpp" />
+    <ClCompile Include="tmxparser\Property.cpp" />
+    <ClCompile Include="tmxparser\TileLayer.cpp" />
+    <ClCompile Include="tmxparser\Tileset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Components.h" />
@@ -116,31 +102,7 @@
     <ClInclude Include="Services.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="TextureAtlas.h" />
-    <ClInclude Include="tmxparser\base64.h" />
-    <ClInclude Include="tmxparser\Tmx.h" />
-    <ClInclude Include="tmxparser\TmxColor.h" />
-    <ClInclude Include="tmxparser\TmxEllipse.h" />
-    <ClInclude Include="tmxparser\TmxGroupLayer.h" />
-    <ClInclude Include="tmxparser\TmxImage.h" />
-    <ClInclude Include="tmxparser\TmxImageLayer.h" />
-    <ClInclude Include="tmxparser\TmxLayer.h" />
-    <ClInclude Include="tmxparser\TmxMap.h" />
-    <ClInclude Include="tmxparser\TmxMapTile.h" />
-    <ClInclude Include="tmxparser\TmxObject.h" />
-    <ClInclude Include="tmxparser\TmxObjectGroup.h" />
-    <ClInclude Include="tmxparser\TmxPoint.h" />
-    <ClInclude Include="tmxparser\TmxPolygon.h" />
-    <ClInclude Include="tmxparser\TmxPolyline.h" />
-    <ClInclude Include="tmxparser\TmxProperty.h" />
-    <ClInclude Include="tmxparser\TmxPropertySet.h" />
-    <ClInclude Include="tmxparser\TmxTerrain.h" />
-    <ClInclude Include="tmxparser\TmxTerrainArray.h" />
-    <ClInclude Include="tmxparser\TmxText.h" />
-    <ClInclude Include="tmxparser\TmxTile.h" />
-    <ClInclude Include="tmxparser\TmxTileLayer.h" />
-    <ClInclude Include="tmxparser\TmxTileOffset.h" />
-    <ClInclude Include="tmxparser\TmxTileset.h" />
-    <ClInclude Include="tmxparser\TmxUtil.h" />
+    <ClInclude Include="tmxparser\miniz.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

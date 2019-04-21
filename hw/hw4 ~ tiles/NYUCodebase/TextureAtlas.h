@@ -1,26 +1,76 @@
 #pragma once
-#include <tinyxml2.h>
 #include <iostream>
 #include <map>
 #include <vector>
+#include <pugixml.hpp>
+#include <tmxlite/Map.hpp>
+#include <tmxlite/TileLayer.hpp>
+#include "Components.h"
 #include "util.h"
 
-struct VertexBufferSet {
-	GLuint xyz_id;
-	GLuint uv_id;
-	GLuint tex_id;
-	float w, h;
+struct SpriteCollider {
+	Sprite vbo;
+	std::vector<Collider> boxes;
 };
 
 class TexturePool {
 private:
-	std::map<std::string, VertexBufferSet> vbos;
+	std::map<std::string, SpriteCollider> vbos;
 public:
 	TexturePool() {}
+	void addTileset(const tmx::Tileset& tileset) {
+		float unitsquare[] = { -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f };
+		GLuint xyz_id = LoadArray(unitsquare, sizeof(unitsquare));
+		Image texture = LoadTexture(tileset.getImagePath());
+		auto& tilesize = tileset.getTileSize();
+		GLuint tex_id = texture.id;
+		std::string name = tileset.getName();
+		for (const auto& tile : tileset.getTiles()) {
+			std::vector<Collider> boxes;
+			for (const tmx::Property& prop : tile.properties) {
+				if (prop.getName() == "collision" && prop.getBoolValue()) {
+					boxes.push_back({1.0f, 1.0f});
+				}
+			}
+			for (const auto& collider : tile.objectGroup.getObjects()) {
+				auto box = collider.getAABB();
+				box.left += (box.width - tilesize.x) / 2.f;
+				box.left /= tilesize.x;
+				box.top += (box.height - tilesize.y) / 2.f;
+				box.top /= tilesize.y;
+				box.top = -box.top;
+				box.width /= tilesize.x;
+				box.height /= tilesize.y;
+				boxes.push_back({ box.width, box.height, box.left, box.top });
+			}
+
+			auto size = tile.imageSize;
+			auto pos = tile.imagePosition;
+			float x = pos.x / (float) texture.w;
+			float y = pos.y / (float) texture.h;
+			float w = size.x / (float) texture.w; 
+			float h = size.y / (float) texture.h;
+			float uv[] = {
+					x		, y + h,
+					x + w	, y + h,
+					x + w	, y,
+					x		, y + h,
+					x + w	, y,
+					x		, y
+			};
+			GLuint uv_id = LoadArray(uv, sizeof(uv));
+			Sprite vbo;
+			vbo.tex_id = tex_id;
+			vbo.uv_id = uv_id;
+			vbo.xyz_id = xyz_id;
+			vbos[tileset.getName() + std::to_string(tile.ID)] = { vbo, boxes };
+		}
+	}
 	void addAtlas(std::string& xmlpath)
 	{
-		tinyxml2::XMLDocument doc;
-		if (doc.LoadFile(xmlpath.c_str())) {
+		pugi::xml_document doc;
+		pugi::xml_parse_result result = doc.load_file(xmlpath.c_str());
+		if (!result) {
 			std::cout << "xml read error.";
 			std::abort();
 		}
@@ -33,7 +83,7 @@ public:
 			folder = xmlpath.substr(0,idx);
 		}
 
-		std::string imgfile = std::string(doc.FirstChildElement("TextureAtlas")->Attribute("imagePath"));
+		std::string imgfile = doc.child("TextureAtlas").attribute("imagePath").as_string();
 		std::cout << "File name: " << imgfile << std::endl;
 
 		std::cout << "Folder: " << folder << std::endl;
@@ -41,19 +91,20 @@ public:
 		std::cout << imgpath << std::endl;
 
 		Image image = LoadTexture(imgpath.c_str());
+		pugi::xml_node textures = doc.child("TextureAtlas");
 
-		for (tinyxml2::XMLNode* tex = doc.FirstChild()->FirstChild(); tex; tex = tex->NextSibling())
+		for (pugi::xml_node tex = textures.first_child(); tex; tex = tex.next_sibling()) 
 		{
-			tinyxml2::XMLElement* elem = tex->ToElement();
-			std::string filename = std::string(elem->Attribute("name"));
-			float x = elem->FloatAttribute("x") / image.w;
-			float y = elem->FloatAttribute("y") / image.h;
-			float w = elem->FloatAttribute("width") / image.w;
-			float h = elem->FloatAttribute("height") / image.h;
+			std::string filename = tex.attribute("name").as_string();
+			float x = tex.attribute("x").as_float() / image.w;
+			float y = tex.attribute("y").as_float() / image.h;
+			float w = tex.attribute("width").as_float() / image.w;
+			float h = tex.attribute("height").as_float() / image.h;
 			float realw = w * image.w;
 			float realh = h * image.h;
 			float aspect = realw / realh;
-			VertexBufferSet vbo;
+			Sprite vbo;
+			Collider box;
 			float uv[] = {
 					x		, y + h,
 					x + w	, y + h,
@@ -73,9 +124,9 @@ public:
 			};
 			vbo.xyz_id = LoadArray(verts, sizeof(verts));
 			vbo.tex_id = image.id;
-			vbo.w = aspect;
-			vbo.h = 1.0f;
-			vbos[filename] = vbo;
+			box.width = aspect;
+			box.height = 1.0f;
+			vbos[filename] = { vbo, {box} };
 		}
 		std::cout << "Finished.\n";
 	}
@@ -107,7 +158,8 @@ public:
 				float h = 1.0f / rows;
 				float px = x * w;
 				float py = y * h;
-				VertexBufferSet vbo;
+				Sprite vbo;
+				Collider box;
 				float uv[] =
 				{
 					px		, py + h,
@@ -120,9 +172,9 @@ public:
 				vbo.uv_id = LoadArray(uv, sizeof(uv));
 				vbo.xyz_id = xyz_id;
 				vbo.tex_id = image.id;
-				vbo.w = aspect;
-				vbo.h = 1.0f;
-				vbos[*nameIter] = vbo;
+				box.width = aspect;
+				box.height = 1.0f;
+				vbos[*nameIter] = { vbo, {box} };
 				
 				nameIter++;
 			}
@@ -137,10 +189,10 @@ public:
 		}
 		addGrid(imgpath, std::vector<std::string>{ imgname }, 1, 1);
 	}
-	VertexBufferSet& operator[](std::string& str) {
+	SpriteCollider& operator[](std::string& str) {
 		return vbos[str];
 	}
-	VertexBufferSet& operator[](char* str) {
+	SpriteCollider& operator[](char* str) {
 		return (*this)[std::string(str)];
 	}
 };
