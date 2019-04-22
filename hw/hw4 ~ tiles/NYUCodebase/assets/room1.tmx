@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="32" height="16" tilewidth="8" tileheight="8" infinite="0" backgroundcolor="#f521263f" nextlayerid="5" nextobjectid="3">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="32" height="16" tilewidth="8" tileheight="8" infinite="0" backgroundcolor="#f521263f" nextlayerid="5" nextobjectid="4">
  <tileset firstgid="1" source="cavesofgallet_tiles.tsx"/>
  <layer id="4" name="Tile Layer 1" width="32" height="16" locked="1" opacity="0.9">
   <data encoding="csv">
@@ -21,9 +21,12 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="Objects" locked="1">
+ <objectgroup id="3" name="Objects">
   <object id="1" type="Gate" x="176" y="32" width="8" height="24"/>
   <object id="2" type="Player" x="72" y="72">
+   <point/>
+  </object>
+  <object id="3" type="Enemy" x="120" y="72">
    <point/>
   </object>
  </objectgroup>

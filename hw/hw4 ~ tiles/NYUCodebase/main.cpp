@@ -36,6 +36,8 @@ void displayMenu(void);
 enum GameState { MainMenu, Game };
 static GameState gameState = MainMenu;
 
+static float lastFrameTicks = 0.0f;
+
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
@@ -54,6 +56,7 @@ int main(int argc, char *argv[])
 				gameState == MainMenu)
 			{
 				gameState = Game;
+				lastFrameTicks = (float)SDL_GetTicks() / 1000.0f;
 			}
 		}
 		switch (gameState) {
@@ -119,43 +122,36 @@ void setup() {
 	std::vector<std::string> alphabet;
 	while (ifs >> curr)
 		alphabet.push_back(std::string(1, curr));
+	texAtlas.addGrid(std::string("assets/thickfont.png"), alphabet, 'z' - 'a' + 1, 4);
 	std::vector<std::string> heroanim;
 	for (int i = 0; i < 15; i++)
 		heroanim.push_back("hero" + std::to_string(i));
-	texAtlas.addGrid(std::string("assets/thickfont.png"), alphabet, 'z' - 'a' + 1, 4);
 	texAtlas.addGrid(std::string("assets/hero.png"), heroanim, 15, 1);
+	std::vector<std::string> enemyanim;
+	for (int i = 0; i < 15; i++)
+		enemyanim.push_back("enemy" + std::to_string(i));
+	texAtlas.addGrid(std::string("assets/enemy.png"), enemyanim, 15, 1);
 	world.Load(entityRegistry, texAtlas, "assets/room1.tmx");
-}
-
-
-int playersAlive() {
-	return entityRegistry.size<Player>();
 }
 
 #define TIMESTEP 1.f/60.f
 void update() {
-	static bool gameover = false;
-	static float lastFrameTicks = 0.0f;
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
 	float elapsed = ticks - lastFrameTicks;
-	if (elapsed < TIMESTEP)
-		return;
-	elapsed = TIMESTEP;
-	lastFrameTicks += elapsed;
 
-
+	updateHealth();
 	deathCheck();
-	timeoutCheck(elapsed);
-	enemyMovement(elapsed);
-	updateAnimations(elapsed);
-	updateMotion(elapsed);
-	readInputs(elapsed);
 	updatePlayerCamera(viewMatrix);
 	program.SetViewMatrix(viewMatrix);
-	if (!gameover && !playersAlive()) {
-		gameover = true;
-		std::string message("D E A D");
-		newText(entityRegistry, texAtlas, 0.0f, 0.0f, x_max / message.size(), message);
+
+	while (elapsed > TIMESTEP) {
+		lastFrameTicks += TIMESTEP;
+		elapsed = ticks - lastFrameTicks;
+
+		enemyMovement(TIMESTEP);
+		updateAnimations(TIMESTEP);
+		updateMotion(TIMESTEP);
+		readInputs(TIMESTEP);
 	}
 }
 

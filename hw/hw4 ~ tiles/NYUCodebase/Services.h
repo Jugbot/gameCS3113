@@ -66,7 +66,7 @@ unsigned char sweepCollision(const Transform& old_p1, Transform& new_p1, const C
 			p1.x = new_p1.x;
 			if (checkCollision(*b1, p1, *b2, p2)) {
 				new_p1.x -= distance(p1.x, p2.x, b1->width, b2->width, p1.scale_x, p2.scale_x, b1->offset_x, b2->offset_x);
-				collisionFlags |= (p1.x > p2.x) ? C_RIGHT : C_LEFT;
+				collisionFlags |= (p1.x > p2.x) ? C_LEFT : C_RIGHT;
 			}
 			p1.x = old_p1.x;
 			p1.y = new_p1.y;
@@ -96,13 +96,11 @@ void updateMotion(float t_delta) {
 					dynamic.vel_y = 0.f;
 				if (cflags & (C_LEFT | C_RIGHT))
 					dynamic.vel_x = 0.f;
-				if (entityRegistry.has<Player>(entity)) {
-					Player& player = entityRegistry.get<Player>(entity);
-					player.flag_up = cflags & C_UP || player.flag_up;
-					player.flag_down = cflags & C_DOWN || player.flag_down;
-					player.flag_left = cflags & C_LEFT || player.flag_left;
-					player.flag_right = cflags & C_RIGHT || player.flag_right;
-				} 
+				colliderset.flag_up = cflags & C_UP || colliderset.flag_up;
+				colliderset.flag_down = cflags & C_DOWN || colliderset.flag_down;
+				colliderset.flag_left = cflags & C_LEFT || colliderset.flag_left;
+				colliderset.flag_right = cflags & C_RIGHT || colliderset.flag_right;
+				
 			});
 		}
 	});
@@ -115,7 +113,6 @@ void updateHealth() {
 		enemies.each([&](auto eid, auto& enemy, auto& enemy_transform, auto& enemy_colliderset) {
 			if (checkCollisions(player_colliderset, player_transform, enemy_colliderset, enemy_transform))
 				player_health.health -= enemy.damage;
-			//TODO: invulnerability frames
 				
 		});
 	});
@@ -143,10 +140,10 @@ void readInputs(float t_delta) {
 	const static float speedLimit = 5.f;
 	const static float friction = 20.f;
 	const static float deadzone = 0.2f;
-	entityRegistry.view<Transform, Dynamic, Player>().each([t_delta](auto entity, auto& transform, auto& dynamic, auto& player) {
+	entityRegistry.view<Transform, Dynamic, Player, ColliderSet>().each([t_delta](auto entity, auto& transform, auto& dynamic, auto& player, auto& colliderset) {
 		if (cooldown > actionCooldown) cooldown = actionCooldown;
 		cooldown += t_delta;
-		if (keys[player.action] && cooldown > actionCooldown && player.flag_down) {
+		if (keys[player.action] && cooldown > actionCooldown && colliderset.flag_down) {
 			cooldown -= actionCooldown;
 			dynamic.vel_y = 10.0f;
 		}
@@ -168,11 +165,23 @@ void readInputs(float t_delta) {
 		}
 		if (dynamic.vel_x > speedLimit) dynamic.vel_x = speedLimit;
 		if (dynamic.vel_x < -speedLimit) dynamic.vel_x = -speedLimit;
-		player.flag_up = player.flag_down = player.flag_left = player.flag_right = false;
+		colliderset.flag_up = colliderset.flag_down = colliderset.flag_left = colliderset.flag_right = false;
 	});
 }
 
 void enemyMovement(float t_delta) {
+	const static float agility = 2.0f;
+	entityRegistry.view<Transform, Dynamic, Enemy, ColliderSet>().each([t_delta](auto entity, auto& transform, auto& dynamic, auto& enemy, auto& colliderset) {
+		if (colliderset.flag_left) {
+			dynamic.vel_x = agility;
+			transform.scale_x = 1.f;
+		}
+		else if (colliderset.flag_right) {
+			dynamic.vel_x = -agility;
+			transform.scale_x = -1.f;
+		}
+		colliderset.flag_up = colliderset.flag_down = colliderset.flag_left = colliderset.flag_right = false;
+	});
 }
 
 void updateTransforms(entt::DefaultRegistry& registry) {
@@ -211,9 +220,14 @@ void render(entt::DefaultRegistry& registry, ShaderProgram& sp) {
 
 void deathCheck() {
 	entityRegistry.view<Health>().each([&](auto entity, auto& health) {
-		if (health.health <= 0)
+		if (health.health <= 0) {
+			if (entityRegistry.has<Player, Transform>(entity)) {
+				auto& transform = entityRegistry.get<Transform>(entity);
+				std::string message("D E A D");
+				newText(entityRegistry, texAtlas, transform.x, transform.y, x_max / message.size(), message);
+			}
 			entityRegistry.destroy(entity);
-		//transform.x = -1000.0f;
+		}
 	});
 }
 
@@ -225,15 +239,3 @@ void timeoutCheck(float t_delta) {
 			entityRegistry.destroy(entity);
 	});
 }
-
-
-/*
-void registerObj(vec3* buf_points, vec3* buf_colors, GLuint& buf_id, int size) {
-	size *= sizeof(vec3);
-	glGenBuffers(1, &buf_id);
-	glBindBuffer(GL_ARRAY_BUFFER, buf_id);
-	glBufferData(GL_ARRAY_BUFFER, size * 2, NULL, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, size, buf_points);
-	glBufferSubData(GL_ARRAY_BUFFER, size, size, buf_colors);
-}
-*/

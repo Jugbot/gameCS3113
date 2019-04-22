@@ -6,7 +6,7 @@
 auto newLetter(entt::DefaultRegistry& registry, TexturePool& texAtlas, float x, float y, float size, char letter) {
 	SpriteCollider& tex = texAtlas[std::string(1, letter)];
 	auto eid = registry.create();
-	registry.assign<Transform>(eid, x, y, size);
+	registry.assign<Transform>(eid, x, y, 1.f, size, size, size);
 	registry.assign<Sprite>(eid, tex.vbo.xyz_id, tex.vbo.uv_id, tex.vbo.tex_id);
 	return eid;
 }

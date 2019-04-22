@@ -81,12 +81,25 @@ public:
 						auto& texdata = texturepool["hero0"];
 						auto eid = registry.create();
 						registry.assign<Player>(eid);
+						registry.assign<Health>(eid, 1);
 						registry.assign<Dynamic>(eid, 0.f, 0.f, 0.f, -20.f);
 						registry.assign<Sprite>(eid, texdata.vbo.xyz_id, texdata.vbo.uv_id, texdata.vbo.tex_id);
 						ColliderSet boxes = { {&playerCollision} };
 						registry.assign<ColliderSet>(eid, boxes.boxes);
 						registry.assign<Transform>(eid, pos.x/tilesize.x, pos.y/tilesize.y, 1.0f);
 
+					}
+					else if (objtype == "Enemy") {
+						auto pos = obj.getPosition();
+						auto& texdata = texturepool["enemy0"];
+						auto eid = registry.create();
+						registry.assign<Enemy>(eid);
+						registry.assign<Health>(eid, 1);
+						registry.assign<Dynamic>(eid, 4.f, 0.f, 0.f, -20.f);
+						registry.assign<Sprite>(eid, texdata.vbo.xyz_id, texdata.vbo.uv_id, texdata.vbo.tex_id);
+						ColliderSet boxes = { {&playerCollision} };
+						registry.assign<ColliderSet>(eid, boxes.boxes);
+						registry.assign<Transform>(eid, pos.x / tilesize.x, pos.y / tilesize.y, 0.5f);
 					}
 				}
 			}

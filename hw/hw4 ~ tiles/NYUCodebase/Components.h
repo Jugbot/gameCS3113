@@ -23,7 +23,6 @@ struct Transform {
 struct Dynamic {
 	float vel_x, vel_y;
 	float acc_x, acc_y;
-	float friction = 5.0f;
 };
 
 //Physics or hit detection
@@ -35,6 +34,7 @@ struct Collider {
 
 struct ColliderSet {
 	std::vector<Collider*> boxes;
+	bool flag_up, flag_down, flag_left, flag_right;
 };
 
 //For rendering
@@ -74,7 +74,6 @@ struct Player {
 	SDL_Scancode action = SDL_SCANCODE_SPACE;
 	SDL_Scancode left = SDL_SCANCODE_A;
 	SDL_Scancode right = SDL_SCANCODE_D;
-	bool flag_up, flag_down, flag_left, flag_right;
 };
 
 struct Tile {
