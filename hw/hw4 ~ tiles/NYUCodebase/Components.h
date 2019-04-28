@@ -33,7 +33,7 @@ struct Collider {
 };
 
 struct ColliderSet {
-	std::vector<Collider*> boxes;
+	std::vector<Collider>* boxes;
 	bool flag_up, flag_down, flag_left, flag_right;
 };
 
@@ -46,12 +46,11 @@ struct Sprite {
 
 //Slideshow animation
 //Updates Graphics
-typedef std::vector<GLuint> AnimationSet;
 enum AnimationPattern { REPEAT, ONCE };
 struct Animation {
-	AnimationSet* frames;
+	std::vector<Sprite>* frames;
+	std::vector<float>* delays;
 	AnimationPattern pattern;
-	float speed;
 	float t_accumulator = 0.0f;
 	unsigned int frame = 0;
 };
@@ -74,6 +73,8 @@ struct Player {
 	SDL_Scancode action = SDL_SCANCODE_SPACE;
 	SDL_Scancode left = SDL_SCANCODE_A;
 	SDL_Scancode right = SDL_SCANCODE_D;
+	float t_accumulator = 0.0f;
+	float action_cooldown = 0.1f;
 };
 
 struct Tile {

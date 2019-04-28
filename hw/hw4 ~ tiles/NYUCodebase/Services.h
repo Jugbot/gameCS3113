@@ -8,6 +8,7 @@
 static entt::DefaultRegistry entityRegistry;
 static entt::DefaultRegistry menuRegistry;
 
+//entt::connnect<Sprite>(entityRegistry.on_construct<Animation>());
 
 bool checkRange(float p1, float r1, float p2, float r2) {
 	return abs(p1 - p2) < (r1 + r2) / 2;
@@ -22,32 +23,32 @@ bool checkRangeOffsetScale(float x1, float off1, float r1, float s1,
 	);
 }
 
-bool checkCollisionX(const Collider& b1, const Transform& p1, const Collider& b2, const Transform& p2) {
-	return checkRangeOffsetScale(p1.x, b1.offset_x, b1.width, p1.scale_x, 
+bool checkCollisionX(const Collider& b1, const Transform& p1, const Collider& b2, const Transform& p2, float margin = 0.f) {
+	return checkRangeOffsetScale(p1.x, b1.offset_x, b1.width + margin, p1.scale_x,
 								 p2.x, b2.offset_x, b2.width, p2.scale_x);
 }
 
-bool checkCollisionY(const Collider& b1, const Transform& p1, const Collider& b2, const Transform& p2) {
-	return checkRangeOffsetScale(p1.y, b1.offset_y, b1.height, p1.scale_y,
+bool checkCollisionY(const Collider& b1, const Transform& p1, const Collider& b2, const Transform& p2, float margin = 0.f) {
+	return checkRangeOffsetScale(p1.y, b1.offset_y, b1.height + margin, p1.scale_y,
 								 p2.y, b2.offset_y, b2.height, p2.scale_y);
 }
 
-bool checkCollision(const Collider& b1, const Transform& p1, const Collider& b2, const Transform& p2) {
-	return checkCollisionX(b1, p1, b2, p2) &&
-		checkCollisionY(b1, p1, b2, p2);
+bool checkCollision(const Collider& b1, const Transform& p1, const Collider& b2, const Transform& p2, float margin = 0.f) {
+	return checkCollisionX(b1, p1, b2, p2, margin) &&
+		checkCollisionY(b1, p1, b2, p2, margin);
 }
 
 bool checkCollisions(const ColliderSet& b1, const Transform& p1, const ColliderSet& b2, const Transform& p2) {
-	for (auto c1 : b1.boxes) {
-		for (auto c2 : b2.boxes) {
-			if (checkCollision(*c1, p1, *c2, p2))
+	for (auto c1 : *b1.boxes) {
+		for (auto c2 : *b2.boxes) {
+			if (checkCollision(c1, p1, c2, p2))
 				return true;
 		}
 	}
 	return false;
 }
 
-#define PADDING 0.01f
+#define PADDING 0.001f
 float distance(float p1, float p2, float r1, float r2, float s1, float s2, float off1, float off2) {
 	float pf1 = (p1 + off1 * s1);
 	float pf2 = (p2 + off2 * s2);
@@ -60,18 +61,18 @@ float distance(float p1, float p2, float r1, float r2, float s1, float s2, float
 #define C_RIGHT 8u
 unsigned char sweepCollision(const Transform& old_p1, Transform& new_p1, const ColliderSet& bs1, const Transform& p2, const ColliderSet& bs2) {
 	unsigned char collisionFlags = 0;
-	for (auto b2 : bs2.boxes) {
-		for (auto b1 : bs1.boxes) {
+	for (auto b2 : *bs2.boxes) {
+		for (auto b1 : *bs1.boxes) {
 			Transform p1 = old_p1;
 			p1.x = new_p1.x;
-			if (checkCollision(*b1, p1, *b2, p2)) {
-				new_p1.x -= distance(p1.x, p2.x, b1->width, b2->width, p1.scale_x, p2.scale_x, b1->offset_x, b2->offset_x);
+			if (checkCollision(b1, p1, b2, p2)) {
+				new_p1.x -= distance(p1.x, p2.x, b1.width, b2.width, p1.scale_x, p2.scale_x, b1.offset_x, b2.offset_x);
 				collisionFlags |= (p1.x > p2.x) ? C_LEFT : C_RIGHT;
 			}
 			p1.x = old_p1.x;
 			p1.y = new_p1.y;
-			if (checkCollision(*b1, p1, *b2, p2)) {
-				new_p1.y -= distance(p1.y, p2.y, b1->height, b2->height, p1.scale_y, p2.scale_y, b1->offset_y, b2->offset_y);
+			if (checkCollision(b1, p1, b2, p2)) {
+				new_p1.y -= distance(p1.y, p2.y, b1.height, b2.height, p1.scale_y, p2.scale_y, b1.offset_y, b2.offset_y);
 				collisionFlags |= (p1.y > p2.y) ? C_DOWN : C_UP;
 			}
 		}
@@ -84,10 +85,12 @@ void updateMotion(float t_delta) {
 	auto& solids = entityRegistry.view<Tile, Transform, ColliderSet>();
 	entityRegistry.view<Transform, Dynamic>().each([&, t_delta](auto entity, auto &transform, auto& dynamic) {
 		Transform last_transform = transform;
-		transform.x += dynamic.vel_x * t_delta;
-		transform.y += dynamic.vel_y * t_delta;
+		//Note the order of these operations make sure that an 
+		//entity's down flag stays triggered every update
 		dynamic.vel_x += dynamic.acc_x * t_delta;
 		dynamic.vel_y += dynamic.acc_y * t_delta;
+		transform.x += dynamic.vel_x * t_delta;
+		transform.y += dynamic.vel_y * t_delta;
 		if (entityRegistry.has<ColliderSet>(entity)) {
 			ColliderSet& colliderset = entityRegistry.get<ColliderSet>(entity);
 			solids.each([&](auto tile_entity, auto& tile, auto& tile_transform, auto& tile_colliderset) {
@@ -113,38 +116,37 @@ void updateHealth() {
 		enemies.each([&](auto eid, auto& enemy, auto& enemy_transform, auto& enemy_colliderset) {
 			if (checkCollisions(player_colliderset, player_transform, enemy_colliderset, enemy_transform))
 				player_health.health -= enemy.damage;
-				
 		});
 	});
 }
 
 void updateAnimations(float t_delta) {
-	entityRegistry.view<Animation, Sprite>().each([t_delta](auto entity, auto& animation, auto& sprite) {
-		if ((animation.t_accumulator += t_delta) > animation.speed) {
-			animation.t_accumulator -= animation.speed;
+	entityRegistry.view<Animation, Sprite>().each([t_delta](auto entity, Animation& animation, auto& sprite) {
+		if (animation.frames->size() && animation.delays->size() && 
+			(animation.t_accumulator += t_delta) > animation.delays->at(animation.frame % animation.delays->size())) {
+			animation.t_accumulator -= animation.delays->at(animation.frame % animation.delays->size());
 			animation.frame += 1;
 			if (animation.pattern == REPEAT)
 				animation.frame %= animation.frames->size();
 			if (animation.pattern == ONCE && animation.frame >= animation.frames->size())
 				animation.frame = animation.frames->size() - 1;
-			sprite.uv_id = animation.frames->at(animation.frame);
+			sprite = animation.frames->at(animation.frame);
 		}
 	});
 }
 
 const Uint8 *keys = SDL_GetKeyboardState(NULL);
 void readInputs(float t_delta) {
-	static float cooldown = 0.0f;
-	static float actionCooldown = 0.1f;
-	const static float agility = 10.0f;
+	const static float agility = 20.0f;
 	const static float speedLimit = 5.f;
 	const static float friction = 20.f;
 	const static float deadzone = 0.2f;
-	entityRegistry.view<Transform, Dynamic, Player, ColliderSet>().each([t_delta](auto entity, auto& transform, auto& dynamic, auto& player, auto& colliderset) {
-		if (cooldown > actionCooldown) cooldown = actionCooldown;
-		cooldown += t_delta;
-		if (keys[player.action] && cooldown > actionCooldown && colliderset.flag_down) {
-			cooldown -= actionCooldown;
+	entityRegistry.view<Transform, Dynamic, Player, ColliderSet, Animation>().each([t_delta](auto entity, auto& transform, auto& dynamic, Player& player, auto& colliderset, auto& animation) {
+		if (player.t_accumulator > player.action_cooldown) 
+			player.t_accumulator = player.action_cooldown;
+		player.t_accumulator += t_delta;
+		if (keys[player.action] && player.t_accumulator > player.action_cooldown && colliderset.flag_down) {
+			player.t_accumulator -= player.action_cooldown;
 			dynamic.vel_y = 10.0f;
 		}
 		if (keys[player.left] == keys[player.right]) {
@@ -165,6 +167,22 @@ void readInputs(float t_delta) {
 		}
 		if (dynamic.vel_x > speedLimit) dynamic.vel_x = speedLimit;
 		if (dynamic.vel_x < -speedLimit) dynamic.vel_x = -speedLimit;
+		// Animations
+		if (!colliderset.flag_down) {
+			if (dynamic.vel_y > 0) {
+				animation.frames = &texAtlas["hero_up"].vbos;
+			}
+			else {
+				animation.frames = &texAtlas["hero_down"].vbos;
+			}
+		}
+		else if (keys[player.left] || keys[player.right]) {
+			animation.frames = &texAtlas["hero_run"].vbos;
+		}
+		else {
+			animation.frames = &texAtlas["hero_stand"].vbos;
+		}
+		// Reset flags
 		colliderset.flag_up = colliderset.flag_down = colliderset.flag_left = colliderset.flag_right = false;
 	});
 }

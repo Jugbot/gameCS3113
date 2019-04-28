@@ -122,15 +122,16 @@ void setup() {
 	std::vector<std::string> alphabet;
 	while (ifs >> curr)
 		alphabet.push_back(std::string(1, curr));
-	texAtlas.addGrid(std::string("assets/thickfont.png"), alphabet, 'z' - 'a' + 1, 4);
-	std::vector<std::string> heroanim;
-	for (int i = 0; i < 15; i++)
-		heroanim.push_back("hero" + std::to_string(i));
-	texAtlas.addGrid(std::string("assets/hero.png"), heroanim, 15, 1);
-	std::vector<std::string> enemyanim;
-	for (int i = 0; i < 15; i++)
-		enemyanim.push_back("enemy" + std::to_string(i));
-	texAtlas.addGrid(std::string("assets/enemy.png"), enemyanim, 15, 1);
+	texAtlas.addGrid("assets/thickfont.png", alphabet, 'z' - 'a' + 1, 4);
+	std::vector<std::pair<const std::string, unsigned int>> anims{
+			{"stand", 1},
+			{"run", 6},
+			{"up", 1},
+			{"down", 1},
+			{"die", 6}
+	};
+	texAtlas.addAnimations("assets/enemy.png", "enemy_", anims, { 0.1f }, 15, 1);
+	texAtlas.addAnimations("assets/hero.png", "hero_", anims, { 0.1f }, 15, 1);
 	world.Load(entityRegistry, texAtlas, "assets/room1.tmx");
 }
 
@@ -148,10 +149,10 @@ void update() {
 		lastFrameTicks += TIMESTEP;
 		elapsed = ticks - lastFrameTicks;
 
-		enemyMovement(TIMESTEP);
-		updateAnimations(TIMESTEP);
 		updateMotion(TIMESTEP);
 		readInputs(TIMESTEP);
+		enemyMovement(TIMESTEP);
+		updateAnimations(TIMESTEP);
 	}
 }
 

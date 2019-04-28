@@ -9,8 +9,9 @@
 #include "util.h"
 
 struct SpriteCollider {
-	Sprite vbo;
+	std::vector<Sprite> vbos;
 	std::vector<Collider> boxes;
+	std::vector<float> delays;
 };
 
 class TexturePool {
@@ -63,10 +64,24 @@ public:
 			vbo.tex_id = tex_id;
 			vbo.uv_id = uv_id;
 			vbo.xyz_id = xyz_id;
-			vbos[tileset.getName() + std::to_string(tile.ID)] = { vbo, boxes };
+			vbos[tileset.getName() + std::to_string(tile.ID)] = { {vbo}, boxes };
+		}
+		//Animations
+		for (const auto& tile : tileset.getTiles()) {
+			std::vector<Sprite> frames;
+			std::vector<float> delays;
+			for (const auto& frame : tile.animation.frames) {
+				frames.push_back(vbos[tileset.getName() + std::to_string(frame.tileID-1)].vbos[0]);
+				delays.push_back(frame.duration/1000.f);
+			}
+			if (frames.size()) {
+				auto& sc = vbos[tileset.getName() + std::to_string(tile.ID)];
+				sc.vbos = frames;
+				sc.delays = delays;
+			}
 		}
 	}
-	void addAtlas(std::string& xmlpath)
+	void addAtlas(const std::string& xmlpath)
 	{
 		pugi::xml_document doc;
 		pugi::xml_parse_result result = doc.load_file(xmlpath.c_str());
@@ -126,11 +141,11 @@ public:
 			vbo.tex_id = image.id;
 			box.width = aspect;
 			box.height = 1.0f;
-			vbos[filename] = { vbo, {box} };
+			vbos[filename] = { {vbo}, {box} };
 		}
 		std::cout << "Finished.\n";
 	}
-	void addGrid(std::string& imgpath, std::vector<std::string>& names, int cols, int rows, int offset = 0) {
+	void addGrid(const std::string& imgpath, const std::vector<std::string>& names, int cols, int rows, int offset = 0) {
 		Image image = LoadTexture(imgpath.c_str());
 		float w = 1.0f / cols * image.w;
 		float h = 1.0f / rows * image.h;
@@ -149,7 +164,7 @@ public:
 		for (int y = 0; y < rows; y++) {
 			for (int x = 0; x < cols; x++) {
 				if (offset) {
-					offset--; 
+					offset--;
 					continue;
 				}
 				if (nameIter == names.end())
@@ -158,8 +173,10 @@ public:
 				float h = 1.0f / rows;
 				float px = x * w;
 				float py = y * h;
-				Sprite vbo;
 				Collider box;
+				box.width = aspect;
+				box.height = 1.0f;
+				Sprite vbo;
 				float uv[] =
 				{
 					px		, py + h,
@@ -172,15 +189,70 @@ public:
 				vbo.uv_id = LoadArray(uv, sizeof(uv));
 				vbo.xyz_id = xyz_id;
 				vbo.tex_id = image.id;
-				box.width = aspect;
-				box.height = 1.0f;
-				vbos[*nameIter] = { vbo, {box} };
-				
+				vbos[*nameIter] = { {vbo}, {box} };
+
 				nameIter++;
 			}
 		}
 	}
-	void addSingle(std::string& imgpath) {
+	SpriteCollider& addGridSet(const std::string& imgpath, const std::string& name, int cols, int rows, unsigned int begin = 0, unsigned int length = UINT_MAX) {
+		SpriteCollider sc;
+		Image image = LoadTexture(imgpath.c_str());
+		float w = 1.0f / cols * image.w;
+		float h = 1.0f / rows * image.h;
+		float aspect = w / h;
+		float verts[] =
+		{
+				-aspect / 2, -0.5f,
+				aspect / 2, -0.5f,
+				aspect / 2, 0.5f,
+				-aspect / 2, -0.5f,
+				aspect / 2, 0.5f,
+				-aspect / 2, 0.5f
+		};
+		GLuint xyz_id = LoadArray(verts, sizeof(verts));
+		for (int y = 0; y < rows; y++) {
+			for (int x = 0; x < cols; x++) {
+				if (begin) {
+					begin--;
+					continue;
+				} 
+				if (!length)
+					continue;
+				length--;
+
+				float w = 1.0f / cols;
+				float h = 1.0f / rows;
+				float px = x * w;
+				float py = y * h;
+				Sprite vbo;
+				float uv[] =
+				{
+					px		, py + h,
+					px + w	, py + h,
+					px + w	, py,
+					px		, py + h,
+					px + w	, py,
+					px		, py
+				};
+				vbo.uv_id = LoadArray(uv, sizeof(uv));
+				vbo.xyz_id = xyz_id;
+				vbo.tex_id = image.id;
+				sc.vbos.push_back({vbo});
+			}
+		}
+		sc.boxes = { { aspect, 1.f } };
+		return (vbos[name] = sc);
+	}
+	void addAnimations(const std::string& imgpath, const std::string& prefix, const std::vector<std::pair<const std::string, unsigned int>>& sets, const std::vector<float>& delays, int cols, int rows) {
+		unsigned int accum = 0;
+		for (auto& p : sets) {
+			auto& sc = addGridSet(imgpath, prefix + p.first, cols, rows, accum, p.second);
+			sc.delays = delays;
+			accum += p.second;
+		}
+	}
+	void addSingle(const std::string& imgpath) {
 		std::string imgname;
 		size_t idx = imgpath.find_last_of("/\\");
 		if (idx != std::string::npos)
@@ -189,7 +261,7 @@ public:
 		}
 		addGrid(imgpath, std::vector<std::string>{ imgname }, 1, 1);
 	}
-	SpriteCollider& operator[](std::string& str) {
+	SpriteCollider& operator[](const std::string& str) {
 		return vbos[str];
 	}
 	SpriteCollider& operator[](char* str) {

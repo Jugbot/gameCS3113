@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="8" height="13" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="5">
+ <tileset firstgid="1" source="cavesofgallet_tiles.tsx"/>
+ <layer id="4" name="Tile Layer 1" width="8" height="13">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,
+1,1,1,21,30,21,1,1,
+1,1,22,33,34,2147483681,1,1,
+21,22,33,1,1,3221225533,1,1,
+33,34,35,1,1,2147483709,1,1,
+23,1,1,1,1,63,2147483668,1,
+1073741885,1,1,1,41,75,1,1,
+61,1,1,75,1,1,1,1,
+2147483723,41,75,1,1,1,1,1,
+1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1
+</data>
+ </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" type="Gate" x="24" y="0" width="40" height="8"/>
+  <object id="2" type="Gate" x="0" y="0" width="8" height="40"/>
+  <object id="3" type="Gate" x="56" y="8" width="8" height="88"/>
+  <object id="4" type="Gate" x="32" y="96" width="32" height="8"/>
+ </objectgroup>
+</map>

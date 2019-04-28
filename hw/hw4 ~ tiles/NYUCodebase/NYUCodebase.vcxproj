@@ -98,7 +98,6 @@
     <ClInclude Include="assets.h" />
     <ClInclude Include="TileMap.h" />
     <ClInclude Include="helpers.h" />
-    <ClInclude Include="Animations.h" />
     <ClInclude Include="Services.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="TextureAtlas.h" />

@@ -30,7 +30,7 @@ Image LoadTexture(const char *filePath) {
 	return { retTexture, w, h };
 };
 
-Image LoadTexture(const std::string& str) {
+Image LoadTexture(const const std::string& str) {
 	return LoadTexture(str.c_str());
 }
 
