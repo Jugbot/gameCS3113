@@ -77,14 +77,27 @@ public:
 					if (objtype == "Player")
 					{
 						auto pos = obj.getPosition();
-						auto& texdata = texturepool["hero_stand"];
-						newPlayer(texdata, pos.x / tilesize.x, pos.y / tilesize.y);
+						auto& texdata = texturepool["hero_idle"];
+						newPlayer(texdata, pos.x / tilesize.x, (map.getBounds().height - pos.y) / tilesize.y + 1.5f);
 
 					}
 					else if (objtype == "Enemy") {
 						auto pos = obj.getPosition();
-						auto& texdata = texturepool["enemy_stand"];
-						newEnemy(texdata, pos.x / tilesize.x, pos.y / tilesize.y);
+						auto& texdata = texturepool["enemy_idle"];
+						newEnemy(texdata, pos.x / tilesize.x, (map.getBounds().height - pos.y) / tilesize.y + 1.5f);
+					}
+					else if (objtype == "Gate") {
+						auto pos = obj.getPosition();
+						auto box = obj.getAABB();
+						for (auto& prop : obj.getProperties()) {
+							if (prop.getName() == "to") {
+								newGate(prop.getStringValue(),
+									pos.x / tilesize.x,
+									(map.getBounds().height - pos.y) / tilesize.y,
+									box.width / tilesize.x,
+									box.height / tilesize.y);
+							}
+						}
 					}
 				}
 			}

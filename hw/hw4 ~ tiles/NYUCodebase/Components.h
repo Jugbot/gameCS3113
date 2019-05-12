@@ -6,6 +6,7 @@
 #include "TextureAtlas.h"
 #include <vector>
 #include <string>
+#include <functional>
 
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -56,8 +57,11 @@ struct Animation {
 };
 
 //Destructables
+enum STATUS {ALIVE, DEAD};
 struct Health {
 	int health;
+	STATUS status = ALIVE;
+	float invulnerability_time;
 };
 
 struct Lifespan {
@@ -81,8 +85,18 @@ struct Tile {
 	unsigned int x, y;
 };
 
+struct UIElement {
+	std::vector<std::pair<Transform, Sprite>> renderGroup;
+	std::function<void()> action;
+	bool selected;
+};
+
 enum Owner {PLAYER, ENEMY};
-struct Laser {
+struct Projectile {
 	Owner owner;
 	int damage = 1;
+};
+
+struct Gate {
+	std::string to;
 };

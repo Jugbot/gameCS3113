@@ -41,6 +41,12 @@
    <property name="collision" type="bool" value="false"/>
   </properties>
  </tile>
+ <tile id="11">
+  <animation>
+   <frame tileid="11" duration="325"/>
+   <frame tileid="23" duration="250"/>
+  </animation>
+ </tile>
  <tile id="12">
   <properties>
    <property name="collision" type="bool" value="true"/>
@@ -165,6 +171,9 @@
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="0" y="5" width="8" height="1"/>
+  </objectgroup>
  </tile>
  <tile id="42">
   <properties>
@@ -175,6 +184,12 @@
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+ </tile>
+ <tile id="47">
+  <animation>
+   <frame tileid="47" duration="400"/>
+   <frame tileid="59" duration="300"/>
+  </animation>
  </tile>
  <tile id="48">
   <properties>
@@ -245,6 +260,10 @@
   <properties>
    <property name="collision" type="bool" value="false"/>
   </properties>
+  <objectgroup draworder="index">
+   <object id="1" x="1" y="6" width="5" height="2"/>
+   <object id="2" x="3" y="5" width="3" height="1"/>
+  </objectgroup>
  </tile>
  <tile id="65">
   <properties>

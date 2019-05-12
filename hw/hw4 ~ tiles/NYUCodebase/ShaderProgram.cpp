@@ -24,6 +24,7 @@ void ShaderProgram::Load(const char *vertexShaderFile, const char *fragmentShade
     projectionMatrixUniform = glGetUniformLocation(programID, "projectionMatrix");
     viewMatrixUniform = glGetUniformLocation(programID, "viewMatrix");
 	colorUniform = glGetUniformLocation(programID, "color");
+	tintUniform = glGetUniformLocation(programID, "tint");
     
     positionAttribute = glGetAttribLocation(programID, "position");
     texCoordAttribute = glGetAttribLocation(programID, "texCoord");
@@ -86,6 +87,11 @@ GLuint ShaderProgram::LoadShaderFromString(const std::string &shaderContents, GL
 void ShaderProgram::SetColor(float r, float g, float b, float a) {
 	glUseProgram(programID);
 	glUniform4f(colorUniform, r, g, b, a);
+}
+
+void ShaderProgram::SetTint(float r, float g, float b, float a) {
+	glUseProgram(programID);
+	glUniform4f(tintUniform, r, g, b, a);
 }
 
 void ShaderProgram::SetViewMatrix(const glm::mat4 &matrix) {
