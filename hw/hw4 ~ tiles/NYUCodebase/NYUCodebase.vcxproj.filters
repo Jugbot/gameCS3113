@@ -18,9 +18,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragment.glsl" />
-    <None Include="vertex.glsl" />
     <None Include="fragment_textured.glsl" />
+    <None Include="vertex_textured.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

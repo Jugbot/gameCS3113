@@ -64,6 +64,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\SDL2\include;$(ProjectDir)\SDL2_image\include;$(ProjectDir)\glew\include;$(ProjectDir)\SDL2_mixer\include;$(ProjectDir)\tmxparser;$(ProjectDir)\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -71,13 +72,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)\SDL2_mixer\lib\x86;$(ProjectDir)\SDL2\lib\x86;$(ProjectDir)\SDL2_image\lib\x86;$(ProjectDir)\glew\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2_mixer.lib;glew32.lib;SDL2main.lib;SDL2_image.lib;OpenGL32.lib</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="fragment.glsl" />
     <None Include="fragment_textured.glsl" />
-    <None Include="vertex.glsl" />
+    <None Include="vertex_textured.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
